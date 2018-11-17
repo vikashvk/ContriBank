@@ -4,7 +4,7 @@ import java.sql.Date;
 
 public class Transaction {
 	private int Transaction_ID;
-	private int TranAmount, Account_No;
+	private int TranAmount, Account_ID;
 	private String Tran_description, TransactionType;
 	private Date  DateOfTransaction;
 	
@@ -31,11 +31,11 @@ public class Transaction {
 	}
 	
 	
-	public int getAccount_No() {
-		return Account_No;
+	public int getAccount_ID() {
+		return Account_ID;
 	}
-	public void setAccount_No(int account_No) {
-		Account_No = account_No;
+	public void setAccount_ID(int account_ID) {
+		Account_ID = account_ID;
 	}
 	
 	
@@ -58,19 +58,19 @@ public class Transaction {
 	@Override
 	public String toString() {
 		return "Transactions [Transaction_ID=" + Transaction_ID
-				+ ", TranAmount=" + TranAmount + ", Account_No=" + Account_No
+				+ ", TranAmount=" + TranAmount + ", Account_ID=" + Account_ID
 				+ ", Tran_description=" + Tran_description
 				+ ", TransactionType=" + TransactionType
 				+ ", DateOfTransaction=" + DateOfTransaction + "]";
 	}
 	
 	
-	public Transaction(int tranAmount, int account_No,
+	public Transaction(int tranAmount, int account_ID,
 			String tran_description, String transactionType) {
 		super();
 		DateOfTransaction = new Date(new java.util.Date().getTime());
 		TranAmount = tranAmount;
-		Account_No = account_No;
+		Account_ID = account_ID;
 		Tran_description = tran_description;
 		TransactionType = transactionType;
 	}

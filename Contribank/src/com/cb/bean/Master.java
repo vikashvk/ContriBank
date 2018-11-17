@@ -21,8 +21,8 @@ public class Master {
 		return User_ID;
 	}
 
-	public void setUser_ID(int user_ID) {
-		User_ID = user_ID;
+	public void setUser_ID(String user_id) {
+		User_ID = User_ID;
 	}
 
 	public double getAccount_Balance() {
