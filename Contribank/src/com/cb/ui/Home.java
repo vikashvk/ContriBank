@@ -170,5 +170,6 @@ public class Home {
 		System.out.println(" >> Enter Pancard: ");
 		pancard = sc.next();
 
+		
 	}
 }
