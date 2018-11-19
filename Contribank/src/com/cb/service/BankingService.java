@@ -2,6 +2,8 @@ package com.cb.service;
 
 import java.util.List;
 
+import com.cb.bean.Payee;
+import com.cb.bean.ServiceTracker;
 import com.cb.bean.Transaction;
 import com.cb.bean.UserTable;
 import com.cb.exception.BankingException;
@@ -48,5 +50,16 @@ public interface BankingService {
 	public char[] getCurrentAddress(String userName);
 
 	public char[] updateAddress(String userName);
+
+	public char[] changePassword(String userName, String oldPass, String newPass);
+
+	public List<Payee> getPayeeAccountId(String userName);
+
+	public List<ServiceTracker> getServiceRequestById(String userName,
+			int requestID);
+
+	public List<ServiceTracker> getAllServiceRequested(int acChoice);
+
+	public char[] chequeRequest(int acChoice);
 
 }

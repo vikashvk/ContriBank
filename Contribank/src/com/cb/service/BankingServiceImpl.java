@@ -2,6 +2,8 @@ package com.cb.service;
 
 import java.util.List;
 
+import com.cb.bean.Payee;
+import com.cb.bean.ServiceTracker;
 import com.cb.bean.Transaction;
 import com.cb.bean.UserTable;
 import com.cb.exception.BankingException;
@@ -126,6 +128,37 @@ public class BankingServiceImpl implements BankingService {
 
 	@Override
 	public char[] updateAddress(String userName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public char[] changePassword(String userName, String oldPass, String newPass) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Payee> getPayeeAccountId(String userName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ServiceTracker> getServiceRequestById(String userName,
+			int requestID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ServiceTracker> getAllServiceRequested(int acChoice) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public char[] chequeRequest(int acChoice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
