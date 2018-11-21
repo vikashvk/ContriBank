@@ -89,7 +89,7 @@ public class BankingDaoImpl implements BankingDao {
 	}
 
 	@Override
-	public String addPayee(int user_id, int payee_account_id, String nickname) {
+	public String addPayee(String user_id, int payee_account_id, String nickname) {
 		// TODO Auto-generated method stub
 		return null;
 	}

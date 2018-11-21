@@ -28,7 +28,7 @@ public interface BankingDao {
 
 	public List<Payee> PayeeAccountId(String userName);
 	
-	public String addPayee(int user_id,int payee_account_id,String nickname);
+	public String addPayee(String user_id,int payee_account_id,String nickname);
 	public boolean isAccountExist(int account_no, String userName);
 	public boolean checkTransactionPassword(String userName, String tnxPassword);
 	public boolean isUserExist(String username);

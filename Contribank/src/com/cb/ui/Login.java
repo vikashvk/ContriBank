@@ -150,7 +150,8 @@ public class Login {
 		do {
 			System.out.println(" >> Enter A.c No.: ");
 			acno = sc.nextInt();
-			acchk = bSer.isAccountExist(acno, 0);
+			
+			acchk = bSer.isAccountExist(acno, " ");
 			if (!acchk)
 				System.out.println("No such account exists");
 		} while (!acchk);

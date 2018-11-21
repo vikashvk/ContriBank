@@ -9,57 +9,27 @@ import com.cb.bean.UserTable;
 import com.cb.exception.BankingException;
 
 public interface BankingService {
-	public boolean verifyCredentials(String username, String password);
-
-	public String checklockstatus(String username, String password);
-
-	public void setpassword(String username, String new_pass);
-
-	public void lockAccount(String username);
-
-	public boolean adminLogin(int id, String password);
-
-	public void updateUser(UserTable ut, String username);
-
-	public String checkSecretAns(String username);
-
-	public boolean validateSecretAns(String ans) throws BankingException;
-
-	public boolean validatePassword(String new_pass) throws BankingException;
-
-	public boolean isUserExist(String username);
-
-	public boolean isAccountExist(int acno, int i);
-
-	public int getURN();
-
-	public String validateAndCreatePayeeAccount(String userName);
-
-	public void checkBalanceAndMakeTransaction(int toAcChoice,
-			int fromAcChoice, int amt);
-
-	public boolean checkTransactionPassword(String userName, String tnxPassword);
-
-	public List<Transaction> detailedStatement(int acno, String startDate,
-			String endDate);
-
+	
+	public boolean validateUser(String userName, String password);
+	public List<Integer> getUserAccounts(String userName);
+	public List<Transaction> miniStatement(int accNo);
+	public List<Transaction> detailedStatement(int accNo,String startDate,String endDate);
 	public int getCurrentAcNo(String userName);
-
-	public List<Transaction> miniStatement(int acChoice);
-
-	public char[] getCurrentAddress(String userName);
-
-	public char[] updateAddress(String userName);
-
-	public char[] changePassword(String userName, String oldPass, String newPass);
-
+	public String getCurrentAddress(String userName);
+	public String updateAddress(String userName);
+	public String changePassword(String userName,String oldPass,String newPass);
+	public String chequeRequest(int accNo);
+	public List<ServiceTracker> getAllServiceRequested(int accNo);
+	public List<ServiceTracker> getServiceRequestById(String userName, int requestID);
+	public double getAcAvailableBalance(int fromAcChoice,int amt);
+	public double fundTransfer(int toAcChoice,int fromAcChoice,int amt);
 	public List<Payee> getPayeeAccountId(String userName);
-
-	public List<ServiceTracker> getServiceRequestById(String userName,
-			int requestID);
-
-	public List<ServiceTracker> getAllServiceRequested(int acChoice);
-
-	public char[] chequeRequest(int acChoice);
-
+	public String addPayee(String user_id,int payee_account_id,String nickname);
+	public boolean isAccountExist(int account_no, String userName);
+	public int getURN();
+	public String validateAndCreatePayeeAccount(String userName);
+	public void checkBalanceAndMakeTransaction(int toAcChoice,int fromAcChoice,int amt);
+	public boolean checkTransactionPassword(String userName, String tnxPassword);
+	public boolean isUserExist(String username);
+	
 }
