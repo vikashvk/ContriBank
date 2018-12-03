@@ -66,7 +66,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public boolean validatePassword(String new_pass) throws BankingException {
-		String pass = "[a-zA-z0-9*&!]{8,15}";
+		String pass = "[a-zA-Z0-9*&!]{8,15}";
 		if(Pattern.matches(pass, new_pass)) 
 			return true;
 		else

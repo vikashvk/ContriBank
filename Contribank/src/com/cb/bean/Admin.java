@@ -4,6 +4,9 @@ public class Admin {
 	private int adminId;
 	private String adminPassword;
 
+	public Admin() {
+
+	}
 	public Admin(int adminId, String adminPassword) {
 		super();
 		this.adminId = adminId;

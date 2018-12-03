@@ -6,7 +6,7 @@ public class Fund_transfer {
 
 	public Fund_transfer() {
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public Fund_transfer(int fundTransfer_ID, int account_ID,

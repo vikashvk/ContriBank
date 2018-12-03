@@ -1,30 +1,20 @@
 package com.cb.service;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
-import com.cb.bean.Payee;
+import com.cb.bean.PayeeTable;
 import com.cb.bean.ServiceTracker;
 import com.cb.bean.Transaction;
-import com.cb.bean.UserTable;
 import com.cb.dao.BankingDao;
 import com.cb.dao.BankingDaoImpl;
-import com.cb.exception.BankingException;
 
 public class BankingServiceImpl implements BankingService {
 
 	BankingDao bDao = new BankingDaoImpl();
 	Scanner sc = new Scanner(System.in);
-	Logger serviceLogger = null;
 	
-	@Override
-	public boolean validateUser(String userName, String password) {
-		return bDao.validateUser(userName,password);
-	}
-
 	@Override
 	public List<Integer> getUserAccounts(String userName) {
 		return bDao.getUserAccounts(userName);
@@ -36,9 +26,8 @@ public class BankingServiceImpl implements BankingService {
 	}
 
 	@Override
-	public List<Transaction> detailedStatement(int accNo, String startDate,
-			String endDate) {
-		return bDao.detailedStatement(accNo, startDate, endDate);
+	public List<Transaction> detailedStatement(int accNo) {
+		return bDao.detailedStatement(accNo);
 	}
 
 	@Override
@@ -49,8 +38,18 @@ public class BankingServiceImpl implements BankingService {
 			System.out.println(a);
 		
 		//storing the ac no. for which the user requested for operations
-		System.out.println("Enter Account Number you want to proceed with");
-		int acChoice=sc.nextInt();
+		System.out.println("Select the desired account number:");
+		
+		int acChoice=0;
+		do {
+            try {
+            	acChoice = sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Enter account no in digits only.");
+            }
+            sc.nextLine(); // clears the buffer
+        } while (acChoice <= 0);
+		
 		while(!accList.contains(acChoice))
 		{
 			System.out.println("Sorry You entered wrong Account Number\nEnter Valid Account Number:");
@@ -61,12 +60,13 @@ public class BankingServiceImpl implements BankingService {
 
 	@Override
 	public String getCurrentAddress(String userName) {
+		
 		return bDao.getCurrentAddress(userName);
 	}
 
 	@Override
-	public String updateAddress(String userName) {
-		return bDao.updateAddress(userName);
+	public String updateAddress(String userName, String address) {
+		return bDao.updateAddress(userName, address);
 	}
 
 	@Override
@@ -91,9 +91,9 @@ public class BankingServiceImpl implements BankingService {
 	}
 
 	@Override
-	public double getAcAvailableBalance(int fromAcChoice, int amt) {
+	public double getAcAvailableBalance(int fromAcChoice) {
 
-		return bDao.getAcAvailableBalance(fromAcChoice, amt);
+		return bDao.getAcAvailableBalance(fromAcChoice);
 	}
 
 
@@ -101,7 +101,7 @@ public class BankingServiceImpl implements BankingService {
 	{
 		return bDao.fundTransfer(toAcChoice,fromAcChoice, amt);
 	}
-	public List<Payee> getPayeeAccountId(String userName)
+	public List<PayeeTable> getPayeeAccountId(String userName)
 	{
 		return bDao.PayeeAccountId(userName);
 	}
@@ -120,10 +120,22 @@ public class BankingServiceImpl implements BankingService {
 	public String validateAndCreatePayeeAccount(String userName)
 	{
 		System.out.println("Enter Payee Account Id");
-		int toAc;
+		int toAc=0;
 		do
 		{
-			toAc=sc.nextInt();
+			
+			do {
+	            try {
+	            	toAc = sc.nextInt();
+	            } catch (InputMismatchException e) {
+	                System.out.println("Enter amount in numbers:");
+	            }
+	            sc.nextLine(); // clears the buffer
+	        } while (toAc <= 0);
+			
+			
+			
+
 			if(!isAccountExist(toAc,userName))
 				System.out.println("No such account exist. Enter valid Ac no");
 		}while(!isAccountExist(toAc,userName));
@@ -142,20 +154,17 @@ public class BankingServiceImpl implements BankingService {
 	
 	public void checkBalanceAndMakeTransaction(int toAcChoice,int fromAcChoice,int amt)
 	{
-		if(amt<=getAcAvailableBalance(fromAcChoice,amt))
+		if(amt<=getAcAvailableBalance(fromAcChoice))
 		{
 			double balance = fundTransfer(toAcChoice, fromAcChoice, amt);
-			serviceLogger.info("Fund transfer to Account No "+toAcChoice
-					+"from Account No. "+fromAcChoice+". Current Balance of Account No. "
-					+fromAcChoice+" is "+balance);
+
 			
-			System.out.println("Fund transfer to Account No "+toAcChoice
-					+"from Account No. "+fromAcChoice+"\nCurrent Balance of Account No. "
+			System.out.println("Fund transferd to Account No "+toAcChoice
+					+" from Account No. "+fromAcChoice+"\nCurrent Balance of Account No. "
 					+fromAcChoice+" is "+balance);
 		}
 		else
 		{
-			serviceLogger.warn("Insufficient Balance for A/c No. "+fromAcChoice);
 			System.out.println("Insufficient Balance  for A/c No. "+fromAcChoice);
 		}
 	}
@@ -168,5 +177,11 @@ public class BankingServiceImpl implements BankingService {
 	@Override
 	public boolean isUserExist(String username) {
 		return bDao.isUserExist(username);
+	}
+
+	@Override
+	public boolean checkOldPassword(String userName,String oldPass) {
+		// TODO Auto-generated method stub
+		return bDao.checkOldPassword(userName,oldPass);
 	}
 }

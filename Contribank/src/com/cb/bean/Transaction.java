@@ -65,9 +65,10 @@ public class Transaction {
 	}
 	
 	
-	public Transaction(int tranAmount, int account_ID,
+	public Transaction(int tranId,int tranAmount, int account_ID,
 			String tran_description, String transactionType) {
 		super();
+		Transaction_ID=tranId;
 		DateOfTransaction = new Date(new java.util.Date().getTime());
 		TranAmount = tranAmount;
 		Account_ID = account_ID;

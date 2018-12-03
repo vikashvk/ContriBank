@@ -11,6 +11,10 @@ public class Customer {
 		this.emailId = emailId;
 	}
 
+	public Customer() {
+
+	}
+
 	public String getName() {
 		return name;
 	}

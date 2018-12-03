@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Master {
 	private int Account_ID;
-	private int User_ID;
+	private String User_ID;
 	private double Account_Balance;
 	private String Account_Type;
 	Date open_date;
@@ -17,12 +17,12 @@ public class Master {
 		Account_ID = account_ID;
 	}
 
-	public int getUser_ID() {
+	public String getUser_ID() {
 		return User_ID;
 	}
 
-	public void setUser_ID(String user_id) {
-		User_ID = User_ID;
+	public void setUser_ID(String User_ID) {
+		this.User_ID = User_ID;
 	}
 
 	public double getAccount_Balance() {

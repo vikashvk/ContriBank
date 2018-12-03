@@ -1,49 +1,37 @@
 package com.cb.ui;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-
-
-
-
-
-
-
-
-
-
-
-
-import com.cb.bean.Payee;
+import com.cb.bean.PayeeTable;
 import com.cb.bean.ServiceTracker;
 import com.cb.bean.Transaction;
 import com.cb.exception.BankingException;
-import com.cb.service.AdminService;
-import com.cb.service.AdminServiceImpl;
 import com.cb.service.BankingService;
 import com.cb.service.BankingServiceImpl;
 import com.cb.service.LoginService;
 import com.cb.service.LoginServiceImpl;
 
-
-
+/**
+ * @author 
+ *
+ */
 public class Home 
 {
 	static BankingService bSer = new BankingServiceImpl();
 	static Scanner sc = new Scanner(System.in);
 	Logger homeLogger = null;
-	
+//	
 	public void UserHome(String userName)
-//	public void Home(int userName)
 	{
-		int acChoice;		//to store ac no on which operations to be operated
-		List<Transaction> tnx;
-		homeLogger = Logger.getLogger(Home.class);
+		int acChoice;		//to store account no on which operations to be operated
+		List<Transaction> tnx;//to list the Transactions
+		homeLogger = Logger.getLogger(Home.class);//Logger
 		PropertyConfigurator.configure("log4j.properties");
 				
 		while(true)
@@ -57,15 +45,36 @@ public class Home
 			System.out.println("   Press 5 to Fund Transfer");
 			System.out.println("   Press 6 to Change Password");
 			System.out.println("   Press 9 to Log Out");
+			 int choice=0;
+			 
+			 do {
+		            try {
+		            	choice = sc.nextInt();
+		            } catch (InputMismatchException e) {
+		                System.out.println("Wrong choice.\n Enter again.");
+		            }
+		            sc.nextLine(); // clears the buffer
+		        } while (choice <= 0);
+				
 			 
 			//switch for operations
-			switch(sc.nextInt())
+			switch(choice)
 			{
 				case 1: 
 					System.out.println("1>> Mini Statement\n2>> Detailed Statement");
-					switch(sc.nextInt())
+				    int ch=0;
+					do {
+			            try {
+			            	ch = sc.nextInt();
+			            } catch (InputMismatchException e) {
+			                System.out.println("Wrong choice.\n Enter again.");
+			            }
+			            sc.nextLine(); // clears the buffer
+			        } while (ch <= 0);
+					
+					switch(ch)//nested switch
 					{
-						case 1:	
+						case 1:	//to display mini statements
 							acChoice=bSer.getCurrentAcNo(userName);
 							tnx =  bSer.miniStatement(acChoice);
 							if(!tnx.isEmpty())
@@ -79,42 +88,11 @@ public class Home
 								System.out.println("No Transaction made by you till now.");
 							break;
 							
-						case 2:
-							AdminService aser = new AdminServiceImpl();
+						case 2://to display detailed statements
 							acChoice=bSer.getCurrentAcNo(userName);
-							String startDate = null, endDate = null;
-							boolean checkst = false, checked = false;
 						 
-							do{
-									try
-									{	
-										System.out.println(" >> Enter Start Date in DD-Mon-YY format:");
-										startDate=sc.next();
-										startDate = startDate.toUpperCase();
-										System.out.println(startDate);
-										checkst = aser.validateDate(startDate);
-									}
-									catch(BankingException e)
-									{
-										e.getMessage();
-									}
-								}while(!checkst);
-										
-							
-							do{
-								try{
-										System.out.println(" >> Enter End Date in DD-Mon-YY format:");
-										endDate=sc.next();
-										endDate = endDate.toUpperCase();
-										checked = aser.validateDate(endDate);
-									}
-									catch(BankingException e)
-									{
-										e.getMessage();
-									}
-							}while(!checked);
-							
-							tnx =  bSer.detailedStatement(acChoice,startDate,endDate);
+								
+							tnx =  bSer.detailedStatement(acChoice);
 							if(!tnx.isEmpty())
 							{
 								System.out.println("Tnx ID\tTnx Date\tType\tAmount\tDescription");
@@ -127,47 +105,68 @@ public class Home
 							break;
 							
 						default:
-							System.out.println("!! Alert: Invalid Option! Try Again.");
+							System.out.println("!! Alert: Invalid Option! Try Again !!");
 							break;
 					}
 					break;
 					
-				case 2:
-					System.out.println(" >> Your Current Address:");
-					System.out.println(bSer.getCurrentAddress(userName));
-					System.out.println(" >> Enter your Current Address:");
-					System.out.println(bSer.updateAddress(userName));
+				case 2://to update address
+					System.out.println(" >> Enter your new Address:");
+					String address=sc.next();
+					System.out.println(bSer.updateAddress(userName,address));
 					break;
 					
-				case 3:
+				case 3://Request for Cheque
 					acChoice=bSer.getCurrentAcNo(userName);
 					System.out.println(bSer.chequeRequest(acChoice));
 					break;
 					
-				case 4:
-					System.out.println("? Do you have Service Request ID: press 1 for 'YES' and 2 for 'NO'");
-					switch(sc.nextInt())
+				case 4://Yes/No from user for Service Request ID
+					System.out.println(" Do you have Service Request ID ?\n press 1 for 'YES' and 2 for 'NO'");
+					
+					int uCh=0;
+					do {
+			            try {
+			            	uCh = sc.nextInt();
+			            } catch (InputMismatchException e) {
+			                System.out.println("Wrong choice.\n Enter again.");
+			            }
+			            sc.nextLine(); // clears the buffer
+			        } while (uCh <= 0);
+					
+					//switch for operations
+					switch(uCh)
 					{
-						case 1:
+						case 1:// for service request ID
 							System.out.println(" >> Enter Service Request ID:");
-							int requestID=sc.nextInt();
-							List<ServiceTracker> serTracker = bSer.getServiceRequestById(userName, requestID);
+							int requestID=0;
+					
+							do {
+					            try {
+					            	requestID = sc.nextInt();
+					            } catch (InputMismatchException e) {
+					                System.out.println("Wrong input.\n Enter again.");
+					            }
+					            sc.nextLine(); // clears the buffer
+					        } while (requestID <= 0);
+							
+							List<ServiceTracker> serTracker = bSer.getServiceRequestById(userName, requestID);//check in the list 
 							if(serTracker.isEmpty())
 							{
-								System.out.println("!! Alert: Entered wrong Service Request ID.");
+								System.out.println("!! Alert: Entered wrong Service Request ID !!");
 							}
 							else
 							{
 								System.out.println("Service ID\tAccount ID\tStatus\tDescription");
 								for(ServiceTracker s:serTracker)
 								{
-									System.out.println(s.getService_ID()+"\t\t"+s.getAccount_ID()+"\t\t"+s.getService_status()+"\t"+s.getService_Description());
+									System.out.println(s.getService_ID()+"\t\t"+s.getAccount_ID()+"\t"+s.getService_status()+"\t"+s.getService_Description());
 								}
-								homeLogger.info(":: User requested for services request for Service ID "+requestID);
+								homeLogger.info(" User requested for services request for Service ID "+requestID);
 							}
 							break;
-						case 2:
-							System.out.println("? You would like to view the services requested by you for A/c No.");
+						case 2://to show the list of service request
+							System.out.println(" You would like to view the services requested by you for A/c No ?");
 							acChoice=bSer.getCurrentAcNo(userName);
 							List<ServiceTracker> serviceRqst=bSer.getAllServiceRequested(acChoice);
 							if(!serviceRqst.isEmpty())
@@ -178,10 +177,10 @@ public class Home
 									System.out.println(s.getService_ID()+"\t\t"+s.getAccount_ID()+"\t\t"+s.getService_status()+"\t"+s.getService_Description());
 								}
 
-								homeLogger.info(":: User requested for services request by him/her for A/c no. "+acChoice);
+								homeLogger.info("User requested for services request by him/her for A/c no. "+acChoice);
 							}
 							else
-								System.out.println(":: You have made no request till now.");
+								System.out.println("You have made no request till now.");
 							break;
 						default:
 							System.out.println("!! Alert: Invalid option! Try again...");
@@ -189,11 +188,23 @@ public class Home
 					break;
 					
 					
-				case 5:
-					int fromAcChoice,toAcChoice,amt;
+				case 5://fund transaction
+					int fromAcChoice,toAcChoice =0,amt;
 					String tnxPassword;
-					System.out.println("? You would like to transfer fund to your own account or to others:\n press 1:transfer fund to self\n press 2:transfer fund to others");
-					switch (sc.nextInt()) 
+					System.out.println(" You would like to transfer fund to your own account or to others ?\n press 1:transfer fund to self\n press 2:transfer fund to others");
+					
+					int uc=0;
+					do {
+			            try {
+			            	uc = sc.nextInt();
+			            } catch (InputMismatchException e) {
+			                System.out.println("Wrong choice.\n Enter again.");
+			            }
+			            sc.nextLine(); // clears the buffer
+			        } while (uc <= 0);
+					
+					
+					switch (uc) 
 					{
 						case 1:
 							
@@ -201,36 +212,49 @@ public class Home
 							toAcChoice=bSer.getCurrentAcNo(userName);
 							do
 							{
-								System.out.println("? You would like to transfer ammount from");
+								System.out.println(" You would like to transfer ammount from?");
 								fromAcChoice=bSer.getCurrentAcNo(userName);
 								if(toAcChoice==fromAcChoice)
-									System.out.println("!! Alert: You have selected same Account no.");
+									System.out.println("!! Alert: You have selected same Account no.!!");
 							}while(toAcChoice==fromAcChoice);
 							System.out.println(" >> Enter fund amount you want to transfer");
 							amt=sc.nextInt();
 							System.out.println(" >> Enter the transaction password");
+							
 							tnxPassword=sc.next();
 							while(!bSer.checkTransactionPassword(userName,tnxPassword))
 							{
-									System.out.println("!! Alert: Wrong transaction password. Enter valid transaction password");
+									System.out.println("!! Alert: Wrong transaction password !!\n Enter valid transaction password");
 									tnxPassword=sc.next();
 							}
 							bSer.checkBalanceAndMakeTransaction(toAcChoice,fromAcChoice,amt);
 							break;
 						case 2:
 							System.out.println("Press 1 to Add a new Payee\nPress 2 to Make a Transfer using Registered Payee a/c");
-							switch(sc.nextInt())
+						
+							int c=0;
+							do {
+					            try {
+					            	c = sc.nextInt();
+					            } catch (InputMismatchException e) {
+					                System.out.println("Wrong choice.\n Enter again.");
+					            }
+					            sc.nextLine(); // clears the buffer
+					        } while (c <= 0);
+							
+							
+							switch(c)
 							{
 								case 1:
 									System.out.println(bSer.validateAndCreatePayeeAccount(userName));
 									break;
 								case 2:
-									List<Payee> payeeList = bSer.getPayeeAccountId(userName);
+									List<PayeeTable> payeeList = bSer.getPayeeAccountId(userName);
 									if(!payeeList.isEmpty())
 									{
 										List<Integer> payeeAcs = new ArrayList<Integer>();
 										System.out.println("Payee A/c No. \tNick Name");
-										for(Payee p:payeeList)
+										for(PayeeTable p:payeeList)
 										{
 											System.out.println(p.getPayee_Account_Id()+"\t\t"+p.getNick_name());			
 											payeeAcs.add(p.getPayee_Account_Id());
@@ -238,7 +262,19 @@ public class Home
 										do
 										{
 											System.out.println(" >> Enter a Registered Payee Account:");
-											toAcChoice=sc.nextInt();
+											
+											
+											do {
+									            try {
+									            	toAcChoice = sc.nextInt();
+									            } catch (InputMismatchException e) {
+									                System.out.println("Wrong choice.\n Enter again.");
+									            }
+									            sc.nextLine(); // clears the buffer
+									        } while (toAcChoice <= 0);
+											
+											
+											
 										}while(!payeeAcs.contains(toAcChoice));
 										System.out.println("? You would like to transfer ammount from");
 										fromAcChoice=bSer.getCurrentAcNo(userName);
@@ -248,7 +284,7 @@ public class Home
 										tnxPassword=sc.next();
 										while(!bSer.checkTransactionPassword(userName,tnxPassword))
 										{
-												System.out.println("!! Alert: Wrong transaction password. Enter valid transaction password");
+												System.out.println("!! Alert: Wrong transaction password !!\n Enter valid transaction password");
 												tnxPassword=sc.next();
 										}
 										bSer.checkBalanceAndMakeTransaction(toAcChoice,fromAcChoice,amt);
@@ -266,7 +302,15 @@ public class Home
 						
 				case 6:
 					System.out.println(" >> Enter your old password");
+					
 					String oldPass=sc.next();
+					while(!bSer.checkOldPassword(userName,oldPass))
+					{
+							System.out.println("!! Alert: Wrong old password !!\n Enter valid password");
+							oldPass=sc.next();
+					}
+					
+					
 					String newPass, newPassC;
 					boolean passchk=false;
 					LoginService lser =  new LoginServiceImpl();
@@ -290,7 +334,7 @@ public class Home
 						System.out.println(" >> Confirm new password");
 						newPassC=sc.next();
 						if(!newPass.equals(newPassC))
-							System.out.println("!! Alert: New Password and Confirm Password did not matched");
+							System.out.println("!! Alert: New Password and Confirm Password did not matched !!");
 					}while(!newPass.equals(newPassC));
 					System.out.println(bSer.changePassword(userName,oldPass,newPass));
 					break;
@@ -304,4 +348,5 @@ public class Home
 			}
 		}
 	}
+
 }

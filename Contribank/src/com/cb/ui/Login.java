@@ -2,6 +2,7 @@ package com.cb.ui;
 
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -34,7 +35,7 @@ public class Login {
 		do {
 			System.out.println(" \n\nSelect your choice: "
 					+ "\n  Press 1 to Login"
-					+ "\n  Press 2 if you Forgot Password"
+					+ "\n  Press 2 if you Forgot Password (User) "
 					+ "\n  Press 3 to Exit");
 			choice = sc.next();
 			switch (choice) {
@@ -77,10 +78,11 @@ public class Login {
 				break;
 
 			case "3":
-				System.out.println("Thank you! Bye.");
+				System.out.println("Thank you!");
+				System.exit(0);
 				break;
 			default:
-				System.out.println("!! Alert: Invalid Input!");
+				System.out.println("Alert: Invalid Input!!!");
 				break;
 			}
 
@@ -97,21 +99,31 @@ public class Login {
 		if (db_ans.equals(ans)) {
 			lser.setpassword(username, "sbq500#");
 			System.out
-					.println("!! Alert: Password has been sent to your registered email-id.");
+					.println("Alert:Your default password is sbq500# .");
 		} else
-			System.out.println("!! Alert: Invalid User");
+			System.out.println("Alert: Invalid User");
 
 	}
 
 	public static void Adminlogin() {
-		int Id;
+		int Id=0;
 		String password;
 
 		System.out.println(" >> Enter Admin Id: ");
-		Id = sc.nextInt();
+		
+	    do {
+            try {
+            	Id = sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid AdminId!!Enter agian..");
+            }
+            sc.nextLine(); // clears the buffer
+        } while (Id <= 0);
+		
 		System.out.println(" >> Enter Password: ");
 		password = sc.next();
-		boolean flag = lser.adminLogin(Id, password);
+		boolean flag;
+			flag = lser.adminLogin(Id, password);
 		if (flag) {
 			String operation = "";
 			do {
@@ -119,7 +131,7 @@ public class Login {
 						+ "\n  Press 1 to Create new customer"
 						+ "\n  Press 2 to Create account for existing user"
 						+ "\n  Press 3 to View Transactions"
-						+ "\n  Press 4 to Exit");
+						+ "\n  Press 4 to Logout");
 				operation = sc.next();
 				switch (operation) {
 				case "1":
@@ -135,52 +147,36 @@ public class Login {
 					System.out.println("Thank you! Bye.");
 					login();
 				default:
-					System.out.println("!! Alert: Invalid Input");
+					System.out.println("!! Alert: Invalid Input !!");
+					
 					break;
 				}
 			} while (true);
 		} else
-			System.out.println("!! Alert: Invalid Credentials");
+			System.out.println("!! Alert: Invalid Credentials !!");
 	}
 
 	public static void getPeriodicalTransaction() {
-		String startDate = "", endDate = "";
 		int acno = 0;
-		boolean checkst = false, checked = false, acchk = false;
+		boolean acchk = false;
 		do {
 			System.out.println(" >> Enter A.c No.: ");
-			acno = sc.nextInt();
-			
+			 do {
+		            try {
+		            	acno = sc.nextInt();
+		            } catch (InputMismatchException e) {
+		                System.out.println("Invalid Account No!!");
+		            }
+		            sc.nextLine(); // clears the buffer
+		        } while (acno <= 0);
+		
 			acchk = bSer.isAccountExist(acno, " ");
 			if (!acchk)
 				System.out.println("No such account exists");
 		} while (!acchk);
 
-		do {
-			try {
-				System.out.println(" >> Enter End Date in DD-MMM-YY format:");
-				startDate = sc.next();
-				startDate = startDate.toUpperCase();
-				checked = aser.validateDate(startDate);
-			} catch (BankingException e) {
-				e.getMessage();
-			}
-		} while ((!checkst));
-
-		do {
-			try {
-				System.out.println(" >> Enter End Date in DD-MMM-YY format:");
-				endDate = sc.next();
-				endDate = endDate.toUpperCase();
-				checked = aser.validateDate(endDate);
-
-			} catch (BankingException e) {
-				e.getMessage();
-			}
-		} while (!checked);
-
 		List<Transaction> tnx = bSer
-				.detailedStatement(acno, startDate, endDate);
+				.detailedStatement(acno);
 		if (!tnx.isEmpty()) {
 			System.out.println("Tnx ID\tTnx Date\tType\tAmount\tDescription");
 			for (Transaction t : tnx)
@@ -195,15 +191,15 @@ public class Login {
 	public static void addAccount() {
 		System.out.println("  >> Enter User_Id of existing Customer");
 		String userId = sc.next();
-		if (aser.chechUser(userId)) {
+		if (bSer.isUserExist(userId)) {
 			accountmaster(userId);
 		} else
 			System.out
-					.println("!! Alert: No such User. Please add user to continue.");
+					.println("!! Alert: No such User !!\n Please add user to continue:");
 	}
 
 	public static void addNewCustomer() {
-		String customer_name = null, Email = null, Address = "", Pancard;
+		String customer_name = null,Email=null, Address = "", Pancard;
 		String login_password;
 		boolean namchk = false, mailchk = false;
 		do {
@@ -236,17 +232,18 @@ public class Login {
 		login_password = "1asd40#";
 		String lock_status = "o";
 
-		Customer cust = new Customer(Pancard, customer_name, Email, Address);
-		System.out.println("Success! New Customer added with Customer ID "
+		Customer cust = new Customer(customer_name, Address, Pancard, Email);
+		System.out.println("Success! New Customer added with Customer name "
 				+ aser.addCustomer(cust));
 
 		UserTable ut = new UserTable();
 		ut.setLogin_password(login_password);
 		ut.setPancard(Pancard);
 		ut.setLock_status(lock_status);
+		String id=aser.addUser(ut);
 		System.out.println("Success! New User added with User ID "
-				+ aser.addUser(ut));
-		accountmaster(ut.getUser_id());
+				+id );
+		accountmaster(id);
 
 	}
 
@@ -267,7 +264,17 @@ public class Login {
 		do {
 			try {
 				System.out.println(" >> Enter the Account Balance: ");
-				Account_Balance = sc.nextDouble();
+				
+				do {
+		            try {
+		            	Account_Balance = sc.nextDouble();
+		            } catch (InputMismatchException e) {
+		                System.out.println("Enter amount in numbers:");
+		            }
+		            sc.nextLine(); // clears the buffer
+		        } while (Account_Balance <= 0);
+				
+	
 				accbal = aser.validateMinBal(Account_Balance);
 			} catch (BankingException e) {
 				e.getMessage();
@@ -312,10 +319,12 @@ public class Login {
 					// Check if password is default forgot password then allow
 					// user to change the password.
 					if (password.equals("sbq500#")) {
-						System.out.println(" >> Enter new Login password: ");
-						new_pass = sc.next();
+					//	//System.out.println(" >> Enter new Login password: ");
+					//	new_pass = sc.next();
 						boolean passchk = false;
 						do {
+							System.out.println(" >> Enter new Login password: ");
+						new_pass = sc.next();
 							try {
 								passchk = lser.validatePassword(new_pass);
 							} catch (BankingException e) {
@@ -332,7 +341,7 @@ public class Login {
 							System.out.println("Success! Passowrd updated");
 						} else {
 							System.out
-									.println("!! Alert: Password did not match");
+									.println("!! Alert: Password did not match  !!");
 							continue;
 						}
 						break;
@@ -344,7 +353,7 @@ public class Login {
 						boolean sec = false, passchk = false, txnchk = false;
 						do {
 							System.out
-									.println(" >> Enter Secret Question's Answer: ");
+									.println(" >> Enter Secret Answer: ");
 							ans = sc.next();
 							try {
 								sec = lser.validateSecretAns(ans);
@@ -391,7 +400,7 @@ public class Login {
 							break;
 						} else {
 							System.out
-									.println("!! Alert: Password did not match");
+									.println("!! Alert: Password did not match !!");
 							continue;
 						}
 					}
@@ -417,7 +426,7 @@ public class Login {
 
 			// Failed attempts of login.
 			else if (i <= 2) {
-				System.out.println("!! Alert: Invalid User Name or Password");
+				System.out.println("!! Alert: Invalid User Name or Password !!");
 				continue;
 			}
 
@@ -425,7 +434,7 @@ public class Login {
 			else {
 				lser.lockAccount(username);
 				System.out
-						.println("!!Blocked: 3 wrong attempts. Account is locked.");
+						.println("!!Blocked: 3 wrong attempts. Account is locked. !!");
 				break;
 			}
 

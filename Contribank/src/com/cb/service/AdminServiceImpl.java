@@ -1,12 +1,10 @@
 package com.cb.service;
 
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import com.cb.bean.Customer;
 import com.cb.bean.Master;
-import com.cb.bean.Transaction;
 import com.cb.bean.UserTable;
 import com.cb.dao.AdminDao;
 import com.cb.dao.AdminDaoImpl;
@@ -22,7 +20,7 @@ public class AdminServiceImpl implements AdminService {
 		if(Pattern.matches(namePattern, name))
 			return true;
 		else
-			throw new BankingException("Invalid Customer Name. Name should start with capital letter "+"and only Characters allowed.");
+			throw new BankingException("Invalid Customer Name. Name should start with capital letter and only Characters allowed.");
 		
 	}
 
@@ -36,23 +34,12 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public boolean chechUser(String userId) {
-		return adao.chechUser(userId);
-	}
-
-	@Override
-	public List<Transaction> getPeriodicalTransaction(String startDate,
-			String endDate) {
-		return adao.getPeriodicalTransaction(startDate, endDate);
-	}
-
-	@Override
 	public String addCustomer(Customer cust) {
 		return adao.addCustomer(cust);
 	}
 
 	@Override
-	public int addUser(UserTable ut) {
+	public String addUser(UserTable ut) {
 		return adao.addUser(ut);
 	}
 
@@ -85,6 +72,15 @@ public class AdminServiceImpl implements AdminService {
 			return true;
 		else
 			throw new BankingException("Invalid Date format. Please enter date in DD-MMM-YY format");
+	}
+
+	@Override
+	public boolean validateUserId(String userId) throws BankingException {
+		String mailPattern = "[a-zA-Z0-9_]{4,10}";
+		if(Pattern.matches(mailPattern, userId)) 
+			return true;
+		else
+			throw new BankingException("Invalid User id.");
 	}
 
 }
